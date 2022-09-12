@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nft_creation/auth/auth_bloc_bloc.dart';
 import 'package:nft_creation/constants.dart';
 import 'package:nft_creation/screens/nft_screen.dart';
+import 'package:nft_creation/storage/firebase_connection.dart';
 
 class RegistrationScreen extends StatefulWidget {
   static const String id = 'registration_screen';
@@ -100,8 +101,12 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  onPressed: () async => context.read<AuthBlocBloc>().signUp(
-                      email: email, password: password, userName: username),
+                  onPressed: () async {
+                    context.read<AuthBlocBloc>().signUp(
+                        email: email, password: password, userName: username);
+                    FirebaseConnection()
+                        .addUsername(email: email, userName: username);
+                  },
                   child: const Text(
                     'Register',
                     style: TextStyle(

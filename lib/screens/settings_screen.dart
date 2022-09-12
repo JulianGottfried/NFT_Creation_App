@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dropzone/flutter_dropzone.dart';
 import 'package:nft_creation/auth/auth_bloc_bloc.dart';
 import 'package:nft_creation/constants.dart';
+import 'package:nft_creation/storage/firebase_connection.dart';
 
 class SettingsScreen extends StatefulWidget {
   static const String id = 'settings_screen';
@@ -55,6 +56,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   // or use a picsum photo
                   //user.updatePhotoURL(photoURL)
                   user.updateDisplayName(username);
+                  FirebaseConnection().updateUserName(user: user);
                 } catch (e) {
                   print('ERROR: $e');
                 }

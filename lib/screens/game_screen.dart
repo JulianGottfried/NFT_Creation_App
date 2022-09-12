@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nft_creation/auth/auth_bloc_bloc.dart';
 import 'package:nft_creation/constants.dart';
+import 'package:nft_creation/screens/nft_screen.dart';
 import 'package:nft_creation/screens/settings_screen.dart';
-import 'package:nft_creation/storage/upload_file.dart';
+import 'package:nft_creation/storage/firebase_connection.dart';
 
 class GameScreen extends StatefulWidget {
   static const String id = 'game_screen';
@@ -19,30 +20,22 @@ class _GameScreenState extends State<GameScreen> {
         (context.watch<AuthBlocBloc>().state as AuthStateAuthenticated).user;
     return Scaffold(
       appBar: AppBar(
+          automaticallyImplyLeading: false,
           backgroundColor: Colors.transparent,
           elevation: 0,
-          title: Row(
-            children: [
-              Container(
-                decoration: BoxDecoration(
-                  color: kDefaultColor,
-                  borderRadius: const BorderRadius.all(
-                    Radius.circular(15),
+          leading: Padding(
+            padding: const EdgeInsets.only(left: 17.0),
+            child: user.photoURL != null
+                ? CircleAvatar(
+                    backgroundImage: Image.network(user.photoURL!).image,
+                  )
+                : CircleAvatar(
+                    radius: 15,
+                    backgroundColor: kDefaultColor,
+                    child: const Text("C"),
                   ),
-                ),
-                padding: const EdgeInsets.all(5),
-                child: Text(
-                  "${user.displayName}",
-                  style: const TextStyle(fontSize: 18),
-                ),
-              ),
-            ],
           ),
           actions: [
-            IconButton(
-              icon: const Icon(Icons.logout),
-              onPressed: () => context.read<AuthBlocBloc>().logOut(),
-            ),
             IconButton(
               icon: const Icon(Icons.settings),
               onPressed: () {
@@ -55,7 +48,7 @@ class _GameScreenState extends State<GameScreen> {
       body: Container(
         child: Column(
           children: [
-            const SizedBox(height: 30),
+            const SizedBox(height: 50),
             const Center(
               child: Text(
                 "Your Selected NFT: ",
@@ -66,9 +59,7 @@ class _GameScreenState extends State<GameScreen> {
               ),
             ),
             FutureBuilder<String>(
-              future: UploadFile().loadFile(user),
-              initialData:
-                  'https://firebasestorage.googleapis.com/v0/b/nftcreation-27ecb.appspot.com/o/test@basf.com.png?alt=media&token=a58ba5a9-5aa1-47b4-8683-5ef6ccb2623f',
+              future: FirebaseConnection().getUrl(user),
               builder: (
                 BuildContext context,
                 AsyncSnapshot<String> snapshot,
@@ -81,7 +72,7 @@ class _GameScreenState extends State<GameScreen> {
                       const CircularProgressIndicator(),
                       Visibility(
                         visible: snapshot.hasData,
-                        child: Image.network(snapshot.data!.toString()),
+                        child: const Text("loading"),
                       ),
                     ],
                   );
@@ -89,7 +80,7 @@ class _GameScreenState extends State<GameScreen> {
                   if (snapshot.hasError) {
                     return const Text('Error');
                   } else if (snapshot.hasData) {
-                    return Image.network(snapshot.data!.toString());
+                    return Image.network(snapshot.data.toString());
                   } else {
                     return const Text('Empty data');
                   }
@@ -98,6 +89,23 @@ class _GameScreenState extends State<GameScreen> {
                 }
               },
             ),
+            const SizedBox(height: 20),
+            RawMaterialButton(
+              fillColor: kDefaultColor,
+              elevation: 0,
+              padding: const EdgeInsets.all(20),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              onPressed: () => Navigator.pushNamed(context, NFTScreen.id),
+              child: const Text(
+                'Choose different NFT',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 22,
+                ),
+              ),
+            )
           ],
         ),
       ),

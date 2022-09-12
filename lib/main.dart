@@ -3,6 +3,7 @@ import 'package:nft_creation/auth/auth_bloc_bloc.dart';
 import 'package:nft_creation/auth/auth_repository.dart';
 import 'package:nft_creation/screens/game_screen.dart';
 import 'package:nft_creation/screens/login_screen.dart';
+import 'package:nft_creation/screens/nft_list.dart';
 import 'package:nft_creation/screens/nft_screen.dart';
 import 'package:nft_creation/screens/registration_screen.dart';
 import 'package:nft_creation/screens/settings_screen.dart';
@@ -37,6 +38,7 @@ class NFTCreationApp extends StatelessWidget {
         RegistrationScreen.id: (context) => const RegistrationScreen(),
         NFTScreen.id: (context) => const NFTScreen(),
         SettingsScreen.id: (context) => const SettingsScreen(),
+        NFTList.id: (context) => const NFTList(),
         GameScreen.id: (context) => GameScreen(),
       },
     );
